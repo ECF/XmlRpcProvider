@@ -47,7 +47,9 @@ public class XmlRpcClientService extends AbstractRSAClientService {
 		};
 		String asyncMethod = getAsyncMethod(remoteCall);
 		try {
-			this.client.executeAsync(asyncMethod, remoteCall.getParameters(), cb);
+			synchronized (this.client) { 
+				this.client.executeAsync(asyncMethod, remoteCall.getParameters(), cb);
+			}
 		} catch (XmlRpcException e) {
 			throw new ECFException("Cannot async execute remoteCall="+remoteCall);
 		}
@@ -58,7 +60,9 @@ public class XmlRpcClientService extends AbstractRSAClientService {
 	protected Object invokeSync(RSARemoteCall remoteCall) throws ECFException {
 		String xmlRpcMethod = getSyncMethod(remoteCall);
 		try {
-			return client.execute(xmlRpcMethod,remoteCall.getParameters());
+			synchronized (this.client) {
+				return this.client.execute(xmlRpcMethod,remoteCall.getParameters());
+			}
 		} catch (XmlRpcException e) {
 			throw new ECFException("Could not execute remoteCall="+remoteCall,e);
 		}
