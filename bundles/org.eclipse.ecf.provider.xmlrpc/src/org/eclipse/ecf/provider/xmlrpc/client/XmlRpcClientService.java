@@ -15,7 +15,6 @@ import org.apache.xmlrpc.XmlRpcRequest;
 import org.apache.xmlrpc.client.AsyncCallback;
 import org.apache.xmlrpc.client.XmlRpcClient;
 import org.eclipse.ecf.core.util.ECFException;
-import org.eclipse.ecf.remoteservice.IAsyncRemoteServiceProxy;
 import org.eclipse.ecf.remoteservice.client.AbstractClientContainer;
 import org.eclipse.ecf.remoteservice.client.AbstractRSAClientService;
 import org.eclipse.ecf.remoteservice.client.RemoteServiceClientRegistration;
@@ -33,22 +32,21 @@ public class XmlRpcClientService extends AbstractRSAClientService {
 	protected Object invokeAsync(RSARemoteCall remoteCall) throws ECFException {
 		@SuppressWarnings("rawtypes")
 		final CompletableFuture cf = new CompletableFuture();
-		final AsyncCallback cb = new AsyncCallback() {
-			@Override
-			public void handleError(XmlRpcRequest arg0, Throwable arg1) {
-				cf.completeExceptionally(arg1);
-			}
-
-			@SuppressWarnings("unchecked")
-			@Override
-			public void handleResult(XmlRpcRequest arg0, Object arg1) {
-				cf.complete(arg1);
-			}
-		};
-		String asyncMethod = getAsyncMethod(remoteCall);
 		try {
 			synchronized (this.client) { 
-				this.client.executeAsync(asyncMethod, remoteCall.getParameters(), cb);
+				this.client.executeAsync(getMethod(remoteCall.getMethod()), remoteCall.getParameters(), new AsyncCallback() {
+					@Override
+					public void handleError(XmlRpcRequest arg0, Throwable arg1) {
+						// error occurred
+						cf.completeExceptionally(arg1);
+					}
+					@SuppressWarnings("unchecked")
+					@Override
+					public void handleResult(XmlRpcRequest arg0, Object arg1) {
+						// successful
+						cf.complete(arg1);
+					}
+				});
 			}
 		} catch (XmlRpcException e) {
 			throw new ECFException("Cannot async execute remoteCall="+remoteCall);
@@ -58,24 +56,16 @@ public class XmlRpcClientService extends AbstractRSAClientService {
 
 	@Override
 	protected Object invokeSync(RSARemoteCall remoteCall) throws ECFException {
-		String xmlRpcMethod = getSyncMethod(remoteCall);
 		try {
 			synchronized (this.client) {
-				return this.client.execute(xmlRpcMethod,remoteCall.getParameters());
+				return this.client.execute(getMethod(remoteCall.getReflectMethod().getName()),remoteCall.getParameters());
 			}
 		} catch (XmlRpcException e) {
 			throw new ECFException("Could not execute remoteCall="+remoteCall,e);
 		}
 	}
 
-	protected String getSyncMethod(RSARemoteCall remoteCall) {
-		return String.valueOf(getRegistration().getID().getContainerRelativeID())+"."+remoteCall.getReflectMethod().getName();
-	}
-
-	protected String getAsyncMethod(RSARemoteCall remoteCall) {
-		String methodName = remoteCall.getMethod();
-		if (methodName.endsWith(IAsyncRemoteServiceProxy.ASYNC_METHOD_SUFFIX)) 
-			methodName = methodName.substring(0,methodName.indexOf(IAsyncRemoteServiceProxy.ASYNC_METHOD_SUFFIX));
-		return String.valueOf(getRegistration().getID().getContainerRelativeID())+"."+methodName;
+	protected String getMethod(String methodName) {
+		return String.valueOf(getRegistration().getProperty(org.eclipse.ecf.remoteservice.Constants.SERVICE_ID))+"."+methodName;
 	}
 }
