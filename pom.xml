@@ -99,8 +99,8 @@
         <configuration>
           <target>
             <artifact>
-              <groupId>org.eclipse.ecf</groupId>
-              <artifactId>org.eclipse.ecf.provider.py4j.releng.target</artifactId>
+              <groupId>org.eclipse.ecf.provider.xmlrpc</groupId>
+              <artifactId>org.eclipse.ecf.provider.xmlrpc.target</artifactId>
               <classifier>ecf-${target-platform}</classifier>
               <version>1.0.0-SNAPSHOT</version>
             </artifact>
