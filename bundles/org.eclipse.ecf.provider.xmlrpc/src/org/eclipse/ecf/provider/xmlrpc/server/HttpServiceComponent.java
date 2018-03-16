@@ -8,27 +8,31 @@
  ******************************************************************************/
 package org.eclipse.ecf.provider.xmlrpc.server;
 
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
+import org.eclipse.ecf.provider.xmlrpc.Activator;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferenceCardinality;
-import org.osgi.service.component.annotations.ReferencePolicy;
 import org.osgi.service.http.HttpService;;
 
 @Component(immediate=true,enabled=true)
 public class HttpServiceComponent {
 
-	private static HttpService httpService;
-	
-	@Reference(policy=ReferencePolicy.DYNAMIC,cardinality=ReferenceCardinality.OPTIONAL)
-	void bindHttpService(HttpService svc) {
-		httpService = svc;
+	@Reference
+	synchronized void bindHttpService(HttpService svc) {
+		Activator.getDefault().getFuture().complete(svc);
 	}
 	
-	void unbindHttpService(HttpService svc) {
-		httpService = null;
+	synchronized void unbindHttpService(HttpService svc) {
 	}
 	
-	public static HttpService getHttpService() {
-		return httpService;
+	public static HttpService getHttpService(long timeout) {
+		try {
+			return Activator.getDefault().getFuture().get(timeout,TimeUnit.SECONDS);
+		} catch (InterruptedException | ExecutionException | TimeoutException e) {
+			throw new RuntimeException("Cannot get httpservice after 30 seconds",e);
+		}
 	}
 }

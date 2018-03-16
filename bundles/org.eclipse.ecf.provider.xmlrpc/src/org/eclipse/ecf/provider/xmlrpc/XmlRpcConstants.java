@@ -18,4 +18,5 @@ public interface XmlRpcConstants {
 	String SERVER_SVCPROP_URICONTEXT = "uriContext";
 	String SERVER_DEFAULT_URICONTEXT = "http://localhost:8181";
 	
+	String OSGI_BASIC_TIMEOUT_HEADER = "X-OSGI-BASIC-TIMEOUT";
 }
