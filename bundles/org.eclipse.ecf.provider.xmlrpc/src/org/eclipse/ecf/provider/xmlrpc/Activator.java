@@ -8,6 +8,8 @@
  ******************************************************************************/
 package org.eclipse.ecf.provider.xmlrpc;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Hashtable;
@@ -15,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
+import org.eclipse.ecf.core.ContainerCreateException;
 import org.eclipse.ecf.core.ContainerTypeDescription;
 import org.eclipse.ecf.core.IContainer;
 import org.eclipse.ecf.core.identity.Namespace;
@@ -66,20 +69,38 @@ public class Activator implements BundleActivator {
 										XmlRpcConstants.CLIENT_PROVIDER_CONFIG_TYPE) {
 									@Override
 									public IContainer createInstance(ContainerTypeDescription description,
-											Map<String, ?> parameters) {
-										return new XmlRpcHostContainer(
-												getParameterValue(parameters, XmlRpcConstants.SERVER_SVCPROP_URICONTEXT,
-														XmlRpcConstants.SERVER_DEFAULT_URICONTEXT),
+											Map<String, ?> parameters) throws ContainerCreateException {
+										String urlContext = getParameterValue(parameters, XmlRpcConstants.SERVER_SVCPROP_URICONTEXT,
+												XmlRpcConstants.SERVER_DEFAULT_URICONTEXT);
+										// Create URI and get hostname from it
+										URI uri;
+										try {
+											uri = new URI(urlContext);
+										} catch (URISyntaxException e) {
+											throw new ContainerCreateException("urlContext="+urlContext+" must have uri syntax");
+										}
+										// Check osgi intents for instance
+										checkOSGIIntents(description, uri, parameters);
+										
+										return new XmlRpcHostContainer(urlContext,
 												getParameterValue(parameters, XmlRpcConstants.SERVER_SVCPROP_PATH,
 														XmlRpcConstants.SERVER_DEFAULT_PATH));
 									}
 
 									@Override
-									public String[] getSupportedIntents(ContainerTypeDescription description) {
-										List<String> supportedIntents = new ArrayList<String>(
-												Arrays.asList(super.getSupportedIntents(description)));
-										supportedIntents.add(Constants.OSGI_ASYNC_INTENT);
-										return supportedIntents.toArray(new String[supportedIntents.size()]);
+									protected boolean supportsOSGIAsyncIntent(ContainerTypeDescription description) {
+										return true;
+									}
+
+									@Override
+									protected boolean supportsOSGIConfidentialIntent(
+											ContainerTypeDescription description) {
+										return true;
+									}
+
+									@Override
+									protected boolean supportsOSGIPrivateIntent(ContainerTypeDescription description) {
+										return true;
 									}
 								})
 						.setServer(true).setHidden(false).build(),
