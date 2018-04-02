@@ -22,7 +22,7 @@ public class HttpServiceComponent {
 
 	@Reference
 	synchronized void bindHttpService(HttpService svc) {
-		Activator.getDefault().getFuture().complete(svc);
+		Activator.getCF().complete(svc);
 	}
 	
 	synchronized void unbindHttpService(HttpService svc) {

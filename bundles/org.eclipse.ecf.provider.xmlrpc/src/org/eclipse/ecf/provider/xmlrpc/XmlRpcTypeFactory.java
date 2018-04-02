@@ -8,11 +8,13 @@
  ******************************************************************************/
 package org.eclipse.ecf.provider.xmlrpc;
 
+import java.io.Serializable;
 import java.util.TimeZone;
 
 import org.apache.ws.commons.util.NamespaceContextImpl;
 import org.apache.xmlrpc.common.TypeFactoryImpl;
 import org.apache.xmlrpc.common.XmlRpcController;
+import org.apache.xmlrpc.common.XmlRpcExtensionException;
 import org.apache.xmlrpc.common.XmlRpcStreamConfig;
 import org.apache.xmlrpc.parser.BigDecimalParser;
 import org.apache.xmlrpc.parser.BigIntegerParser;
@@ -50,14 +52,42 @@ import org.apache.xmlrpc.serializer.NullSerializer;
 import org.apache.xmlrpc.serializer.ObjectArraySerializer;
 import org.apache.xmlrpc.serializer.SerializableSerializer;
 import org.apache.xmlrpc.serializer.StringSerializer;
+import org.apache.xmlrpc.serializer.TypeSerializer;
 import org.apache.xmlrpc.serializer.XmlRpcWriter;
 import org.apache.xmlrpc.util.XmlRpcDateTimeDateFormat;
+import org.osgi.dto.DTO;
+import org.osgi.framework.Version;
+import org.xml.sax.SAXException;
 
 public class XmlRpcTypeFactory extends TypeFactoryImpl {
 
 	public XmlRpcTypeFactory(XmlRpcController pController) {
 		super(pController);
 	}
+	@Override
+	public TypeSerializer getSerializer(XmlRpcStreamConfig pConfig, Object pObject) throws SAXException {
+		if (pObject instanceof Serializable) {
+			if (pConfig.isEnabledForExtensions()) {
+				return new XmlRpcSerializableSerializer();
+			} else {
+				throw new SAXException(new XmlRpcExtensionException("Serializable objects aren't supported, if isEnabledForExtensions() == false"));
+			}
+		} else if (pObject instanceof DTO) {
+			if (pConfig.isEnabledForExtensions()) {
+				return new XmlRpcDTOSerializer();
+			} else {
+				throw new SAXException(new XmlRpcExtensionException("DTO objects aren't supported, if isEnabledForExtensions() == false"));
+			}
+		} else if (pObject instanceof Version) {
+			if (pConfig.isEnabledForExtensions()) {
+				return new XmlRpcVersionSerializer();
+			} else {
+				throw new SAXException(new XmlRpcExtensionException("Version objects aren't supported, if isEnabledForExtensions() == false"));
+			}			
+		}
+		return super.getSerializer(pConfig, pObject);
+	}
+	
 	public TypeParser getParser(XmlRpcStreamConfig pConfig, NamespaceContextImpl pContext, String pURI, String pLocalName) {
 		if (XmlRpcWriter.EXTENSIONS_URI.equals(pURI)) {
 			if (!pConfig.isEnabledForExtensions()) {
@@ -80,6 +110,10 @@ public class XmlRpcTypeFactory extends TypeFactoryImpl {
             } else if (BigIntegerSerializer.BIGINTEGER_TAG.equals(pLocalName)) {
                 return new BigIntegerParser();
 			} else if (SerializableSerializer.SERIALIZABLE_TAG.equals(pLocalName)) {
+				return new XmlRpcSerializableParser();
+			} else if ("osgidto".equals(pLocalName)) {
+				return new XmlRpcSerializableParser();
+			} else if ("osgiversion".equals(pLocalName)) {
 				return new XmlRpcSerializableParser();
 			} else if (CalendarSerializer.CALENDAR_TAG.equals(pLocalName)) {
 			    return new CalendarParser();

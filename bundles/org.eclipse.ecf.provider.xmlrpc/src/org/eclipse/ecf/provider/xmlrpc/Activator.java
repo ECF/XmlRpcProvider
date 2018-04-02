@@ -36,10 +36,13 @@ import org.osgi.service.http.HttpService;
 
 public class Activator implements BundleActivator {
 
-	private static CompletableFuture<HttpService> cf;
+	private static CompletableFuture<HttpService> cf = new CompletableFuture<HttpService>();
 	private static Activator instance;
 	private BundleContext context;
 	
+	public static CompletableFuture<HttpService> getCF() {
+		return cf;
+	}
 	public static Activator getDefault() {
 		return instance;
 	}
@@ -58,7 +61,6 @@ public class Activator implements BundleActivator {
 		props.put(IClassResolver.BUNDLE_PROP_NAME, context.getBundle().getSymbolicName());
 		this.context.registerService(IClassResolver.class, new BundleClassResolver(context.getBundle()), props);
 		
-		cf = new CompletableFuture<HttpService>();
 		// Register XmlRpcNamespace
 		context.registerService(Namespace.class, new XmlRpcNamespace(), null);
 		// Register xmlrpc server provider

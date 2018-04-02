@@ -10,19 +10,20 @@ package org.eclipse.ecf.provider.xmlrpc;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 
 import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.parser.ByteArrayParser;
-import org.eclipse.ecf.core.util.ClassResolverObjectInputStream;
+import org.eclipse.ecf.core.util.OSGIObjectInputStream;
 
 public class XmlRpcSerializableParser extends ByteArrayParser {
 	public Object getResult() throws XmlRpcException {
 		try {
 			byte[] res = (byte[]) super.getResult();
 			ByteArrayInputStream bais = new ByteArrayInputStream(res);
-			ObjectInputStream ois = ClassResolverObjectInputStream.create(Activator.getDefault().getContext(),bais);
-			return ois.readObject();
+			OSGIObjectInputStream ois = new OSGIObjectInputStream(Activator.getDefault().getContext().getBundle(),bais);
+			Object result = ois.readObject();
+			ois.close();
+			return result;
 		} catch (IOException e) {
 			throw new XmlRpcException("Failed to read result object: " + e.getMessage(), e);
 		} catch (ClassNotFoundException e) {
