@@ -30,7 +30,7 @@ public class HttpServiceComponent {
 	
 	public static HttpService getHttpService(long timeout) {
 		try {
-			return Activator.getDefault().getFuture().get(timeout,TimeUnit.SECONDS);
+			return Activator.getCF().get(timeout,TimeUnit.SECONDS);
 		} catch (InterruptedException | ExecutionException | TimeoutException e) {
 			throw new RuntimeException("Cannot get httpservice after 30 seconds",e);
 		}

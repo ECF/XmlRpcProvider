@@ -195,7 +195,7 @@ public class XmlRpcHostContainer extends AbstractRSAContainer {
 								e);
 					}
 			}
-			return null;
+			return result;
 		}
 	}
 

@@ -104,6 +104,7 @@ public class Activator implements BundleActivator {
 									protected boolean supportsOSGIPrivateIntent(ContainerTypeDescription description) {
 										return true;
 									}
+									
 								})
 						.setServer(true).setHidden(false).build(),
 				null);
@@ -130,10 +131,6 @@ public class Activator implements BundleActivator {
 								})
 						.setServer(false).setHidden(false).build(),
 				null);
-	}
-
-	public CompletableFuture<HttpService> getFuture() {
-		return cf;
 	}
 
 	@Override
