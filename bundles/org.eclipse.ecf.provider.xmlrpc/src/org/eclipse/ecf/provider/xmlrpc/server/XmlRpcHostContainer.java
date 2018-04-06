@@ -53,9 +53,9 @@ import org.eclipse.ecf.provider.xmlrpc.XmlRpcConstants;
 import org.eclipse.ecf.provider.xmlrpc.XmlRpcTypeFactory;
 import org.eclipse.ecf.provider.xmlrpc.identity.XmlRpcNamespace;
 import org.eclipse.ecf.remoteservice.AbstractRSAContainer;
-import org.eclipse.ecf.remoteservice.Constants;
 import org.eclipse.ecf.remoteservice.RSARemoteServiceContainerAdapter.RSARemoteServiceRegistration;
 import org.eclipse.ecf.remoteservice.asyncproxy.AsyncReturnUtil;
+import org.eclipse.ecf.remoteservice.util.AsyncUtil;
 import org.osgi.service.http.HttpService;
 import org.osgi.service.http.NamespaceException;
 import org.xml.sax.InputSource;
@@ -186,7 +186,7 @@ public class XmlRpcHostContainer extends AbstractRSAContainer {
 				@SuppressWarnings("rawtypes")
 				Class returnType = method.getReturnType();
 				// provider must expose osgi.async property and must be async return type
-				if (reg.getProperty(Constants.OSGI_ASYNC_INTENT) != null && AsyncReturnUtil.isAsyncType(returnType))
+				if (AsyncUtil.isOSGIAsync(reg.getReference()) && AsyncReturnUtil.isAsyncType(returnType))
 					try {
 						return AsyncReturnUtil.convertAsyncToReturn(result, returnType, timeout);
 					} catch (Exception e) {
