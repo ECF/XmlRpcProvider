@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?pde version="3.8"?><target name="XmlRpc Provider Oxygen Target" sequenceNumber="41">
+<?pde version="3.8"?><target name="XmlRpc Provider Oxygen Target" sequenceNumber="43">
 <locations>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.emf.edit.ui.feature.group" version="2.13.0.v20170609-0928"/>
@@ -33,8 +33,8 @@
 <unit id="org.eclipse.ecf.filetransfer.ssl.feature.source.feature.group" version="1.1.100.v20180301-0132"/>
 <unit id="org.eclipse.ecf.remoteservice.sdk.examples.feature.feature.group" version="1.0.100.v20180402-2025"/>
 <unit id="org.eclipse.ecf.remoteservice.sdk.examples.feature.source.feature.group" version="1.0.100.v20180402-2025"/>
-<unit id="org.eclipse.ecf.remoteservice.sdk.feature.feature.group" version="3.14.0.v20180406-1915"/>
-<unit id="org.eclipse.ecf.remoteservice.sdk.feature.source.feature.group" version="3.14.0.v20180406-1915"/>
+<unit id="org.eclipse.ecf.remoteservice.sdk.feature.feature.group" version="3.14.0.v20180412-1942"/>
+<unit id="org.eclipse.ecf.remoteservice.sdk.feature.source.feature.group" version="3.14.0.v20180412-1942"/>
 <repository location="http://download.eclipse.org/rt/ecf/snapshot/site.p2"/>
 </location>
 </locations>
