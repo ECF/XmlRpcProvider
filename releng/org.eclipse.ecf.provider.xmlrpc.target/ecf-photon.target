@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?><?pde version="3.8"?><target name="XmlRpc Provider Oxygen Target" sequenceNumber="43">
 <locations>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.pde.feature.group" version="3.13.100.v20180308-0630"/>
-<unit id="org.eclipse.pde.source.feature.group" version="3.13.100.v20180308-0630"/>
 <unit id="org.eclipse.platform.feature.group" version="4.8.0.v20180308-0630"/>
 <unit id="org.eclipse.platform.source.feature.group" version="4.8.0.v20180308-0630"/>
 <repository location="http://download.eclipse.org/releases/oxygen"/>
