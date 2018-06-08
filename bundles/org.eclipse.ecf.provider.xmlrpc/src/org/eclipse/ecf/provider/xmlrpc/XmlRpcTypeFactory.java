@@ -66,6 +66,9 @@ public class XmlRpcTypeFactory extends TypeFactoryImpl {
 	}
 	@Override
 	public TypeSerializer getSerializer(XmlRpcStreamConfig pConfig, Object pObject) throws SAXException {
+		TypeSerializer superSerializer = super.getSerializer(pConfig, pObject);
+		if (superSerializer != null)
+			return superSerializer;
 		if (pObject instanceof Serializable) {
 			if (pConfig.isEnabledForExtensions()) {
 				return new XmlRpcSerializableSerializer();
@@ -85,7 +88,7 @@ public class XmlRpcTypeFactory extends TypeFactoryImpl {
 				throw new SAXException(new XmlRpcExtensionException("Version objects aren't supported, if isEnabledForExtensions() == false"));
 			}			
 		}
-		return super.getSerializer(pConfig, pObject);
+		throw new SAXException(new XmlRpcExtensionException("Objects of class="+pObject.getClass().getName()+" are not serializable with XmlRpcTypeFactory"));
 	}
 	
 	public TypeParser getParser(XmlRpcStreamConfig pConfig, NamespaceContextImpl pContext, String pURI, String pLocalName) {
