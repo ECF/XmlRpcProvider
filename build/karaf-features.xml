@@ -1,0 +1,7 @@
+<features xmlns="http://karaf.apache.org/xmlns/features/v1.2.0" name="ecf-distribution-xmlrpc-1.2.1">
+
+        <feature name="ecf-rs-distribution-xmlrpc" version="1.2.1" description="ECF Xmlrpc Distribution Provider.  See https://github.com/ECF/XmlRpcProvider">
+	            <bundle>https://raw.githubusercontent.com/ECF/etcd-provider/master/build/plugins/org.eclipse.ecf.provider.etcd_1.4.1.201806122014.jar</bundle>
+		        <bundle>mvn:org.eclipse.ecf/org.json/1.0.0.v201011060100</bundle>
+        </feature>
+</features>
