@@ -1,13 +1,12 @@
 <features xmlns="http://karaf.apache.org/xmlns/features/v1.2.0" name="ecf-distribution-xmlrpc-1.2.1">
 
         <feature name="ecf-rs-distribution-xmlrpc" version="1.2.1" description="ECF Xmlrpc Distribution Provider.  See https://github.com/ECF/XmlRpcProvider">
-				<feature>http</feature>
-	            <bundle>https://raw.githubusercontent.com/ECF/XmlRpcProvider/master/build/plugins/org.eclipse.ecf.provider.xmlrpc_1.2.1.201806122227.jar</bundle>
+			<feature>http</feature>
+		        <feature>ecf-rs-rsa</feature>
+		        <feature>ecf-rs-console</feature>
+	                <bundle>https://raw.githubusercontent.com/ECF/XmlRpcProvider/master/build/plugins/org.eclipse.ecf.provider.xmlrpc_1.2.1.201806122227.jar</bundle>
 		        <bundle>
 			        mvn:org.eclipse.ecf/org.apache.commons.logging/1.1.1.v201101211721
-		        </bundle>
-		        <bundle>
-			        mvn:org.eclipse.ecf/javax.servlet/3.1.0.v201410161800
 		        </bundle>
         </feature>
 </features>
